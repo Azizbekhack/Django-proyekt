@@ -51,3 +51,11 @@ class Portfolio(models.Model):
     url = models.URLField()
     new_date = models.DateField(auto_now=True)
     title = models.CharField(max_length=70)
+
+class Team(models.Model):
+    img=models.ImageField(upload_to='Team/images')
+    description=models.TextField()
+    full_name=models.CharField(max_length=50)
+    job=models.CharField(max_length=20)
+    def __str__(self):
+        return f"{self.full_name} by {self.job}"

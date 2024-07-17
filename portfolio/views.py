@@ -23,7 +23,12 @@ class BlogDetailView(HitCountDetailView):
 import math
 
 def blog_view(request):
-    blogs = Blog.objects.all().order_by('-created_date')
+    c = request.GET.get("category")
+    if c:
+        c=int(c)
+        blogs = Blog.objects.filter(category_id=int(c)).order_by('-created_date')
+    else:
+        blogs = Blog.objects.all().order_by('-created_date')
     blog_count = len(blogs)
     count_obj = 5
     page_count = math.ceil(blog_count/count_obj)
@@ -35,11 +40,19 @@ def blog_view(request):
     categories = Category.objects.all()
     popular_blogs = Blog.objects.all().order_by('hit_count_generic')[:2]
 
-    context = {"categories":categories,'popular_blogs':popular_blogs[:2],'page_obj':page_obj,'page_count':range(1,1+page_count),'page':int(page)}
+    context = {"categories":categories,
+               'popular_blogs':popular_blogs[:2],
+               'page_obj':page_obj,
+               'page_count':range(1,1+page_count),
+               'page':int(page),
+               'curr_category':c,
+               }
     return render(request, 'blog.html',context)
 
-def home_view(request): 
+def home_view(request):
+    print(request) 
     popular_blogs = Blog.objects.all().order_by('hit_count_generic')[:2]
+    
     # popular_blogs = list(Blog.objects.all())
     # for i in range(len(popular_blogs)):
     #     for j in range(len(popular_blogs)):
@@ -48,7 +61,9 @@ def home_view(request):
     
         
     # popular_blogs = popular_blogs[:2]
-    context = {"popular_blogs":popular_blogs}
+    context = {"popular_blogs":popular_blogs,
+               
+               }
     return render(request,'home.html',context)
 
 
